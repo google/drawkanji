@@ -1,0 +1,10 @@
+<IfModule mod_headers.c>
+    Header set Access-Control-Allow-Origin "*"
+    Header set Access-Control-Allow-Methods "GET, POST, OPTIONS, HEAD"
+    Header set Access-Control-Allow-Headers "*"
+    Header set Access-Control-Expose-Headers "Content-Length, Content-Range, Accept-Ranges"
+</IfModule>
+
+AddType application/wasm .wasm
+AddType application/octet-stream .bin
+AddType application/javascript .js

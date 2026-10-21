@@ -1,0 +1,11 @@
+.DS_Store
+*.log
+node_modules/
+.gemini/
+.agents/
+
+# Build outputs
+/build/
+/pkg/
+/target/
+/kanjivg.bin

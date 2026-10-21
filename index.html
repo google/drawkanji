@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kanji Stroke Order</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="styles.css?v=310">
+</head>
+<body>
+  <div class="app-container">
+    <header class="app-header header-glass">
+      <div class="logo-area">
+        <a href="?openExternalBrowser=1&char=愛" class="jp-logo" id="share-btn" title="Share character">
+          <svg class="share-icon" viewBox="0 0 24 24" fill="none" stroke="url(#share-grad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <defs>
+              <linearGradient id="share-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#38bdf8" />
+                <stop offset="100%" stop-color="#6366f1" />
+              </linearGradient>
+            </defs>
+            <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+            <path d="M12 2v13M12 2l-4 4M12 2l4 4"></path>
+          </svg>
+          <svg class="sparkle-star" viewBox="0 0 24 24">
+            <path d="M12 0L14.5 9.5L24 12L14.5 14.5L12 24L9.5 14.5L0 12L9.5 9.5Z"></path>
+          </svg>
+        </a>
+        <div class="logo-text">
+          <h1>WebGPU Kanji</h1>
+          <p>Real-time 3D Shader Rendering</p>
+        </div>
+      </div>
+
+      <div class="header-input-card">
+        <!-- Piece 1: Left input column -->
+        <div class="input-col">
+          <label for="char-input">Pick Kanji:</label>
+          <input type="text" id="char-input" maxlength="1" value="愛" autocomplete="off" autofocus>
+        </div>
+        <!-- Piece 2: Center stroke counter -->
+        <div class="badge-col">
+          <div class="stroke-badge" id="stroke-display">Stroke 1 / 3</div>
+        </div>
+        <!-- Piece 3: Right animate button -->
+        <button id="btn-animate" class="btn-primary header-animate-btn">
+          <span class="desktop-label">&gt;</span>
+          <span class="mobile-label">&gt;</span>
+        </button>
+      </div>
+
+      <div class="gpu-status-badge" id="gpu-status">
+        <span class="status-dot"></span>
+        <span class="status-text">Initializing WebGPU...</span>
+      </div>
+    </header>
+
+    <main class="app-body">
+      <!-- WebGPU Canvas Viewport -->
+      <section class="viewport-section">
+        <div class="canvas-container">
+          <canvas id="gpu-canvas"></canvas>
+        </div>
+        <div class="glass">
+          <div class="playback-grid">
+            <button id="btn-stop" class="btn-secondary" disabled>Stop</button>
+            <button id="btn-one-stroke" class="btn-secondary"><span class="desktop-label">1 stroke</span><span
+                class="mobile-label">1 stroke</span></button>
+            <button id="btn-back-stroke" class="btn-secondary"><span class="desktop-label">Reverse</span><span
+                class="mobile-label">Back</span></button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Sidebar Controls & Server Instructions -->
+      <aside class="control-panel">
+        <div class="control-card glass">
+
+          <div class="control-group">
+            <div class="label-val-row">
+              <label for="anim-speed">Drawing Speed</label>
+              <span id="anim-speed-val" class="control-val">80/s</span>
+            </div>
+            <input type="range" id="anim-speed" min="30" max="300" step="10" value="80">
+          </div>
+
+          <div class="control-group">
+            <div class="label-val-row">
+              <label for="pause-dur">Pause Between Strokes</label>
+              <span id="pause-dur-val" class="control-val">300ms</span>
+            </div>
+            <input type="range" id="pause-dur" min="50" max="500" step="50" value="300">
+          </div>
+
+          <h2 style="margin-top: 1.5rem;">Visual Customization</h2>
+
+          <div class="control-group" id="glow-intensity-control">
+            <div class="label-val-row">
+              <label for="glow-intensity">Glow Intensity</label>
+              <span id="glow-intensity-val" class="control-val">0.0</span>
+            </div>
+            <input type="range" id="glow-intensity" min="0.0" max="3.0" step="0.1" value="0.0">
+          </div>
+
+          <div class="control-group">
+            <div class="label-val-row">
+              <label for="tip-size">Tip Size</label>
+              <span id="tip-size-val" class="control-val">80%</span>
+            </div>
+            <input type="range" id="tip-size" min="50" max="90" step="5" value="80">
+          </div>
+
+          <div class="control-group">
+            <div class="label-val-row">
+              <label for="line-weight">Line Weight</label>
+              <span id="line-weight-val" class="control-val">5.0</span>
+            </div>
+            <input type="range" id="line-weight" min="3.0" max="8.0" step="0.5" value="5.0">
+          </div>
+
+          <div class="control-group">
+            <div class="label-val-row">
+              <label for="trail-length">Trail Length</label>
+              <span id="trail-length-val" class="control-val">140</span>
+            </div>
+            <input type="range" id="trail-length" min="5" max="200" step="1" value="140">
+          </div>
+
+          <div class="control-group">
+            <div class="label-val-row">
+              <label for="zoom">Scale / Zoom</label>
+              <span id="zoom-val" class="control-val">1.4</span>
+            </div>
+            <input type="range" id="zoom" min="0.5" max="2.0" step="0.1" value="1.4">
+          </div>
+
+          <div class="control-group" id="anti-aliasing-control">
+            <div class="label-val-row">
+              <label for="anti-aliasing">Anti-Aliasing</label>
+              <span id="anti-aliasing-val" class="control-val">4x</span>
+            </div>
+            <input type="range" id="anti-aliasing" min="0" max="3" step="1" value="1">
+          </div>
+
+          <div class="control-actions">
+            <button id="btn-reset" class="btn-secondary">Reset View</button>
+          </div>
+
+          <div class="attribution-card">
+            <p>Kanji stroke diagrams by <a href="http://kanjivg.tagaini.net/" target="_blank" rel="noopener">KanjiVG</a> (© Ulrich Apel &amp; contributors), licensed under <a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noopener">CC BY-SA 3.0</a>.</p>
+          </div>
+        </div>
+
+
+      </aside>
+    </main>
+  </div>
+
+  <svg id="svg-helper" style="position: absolute; width: 0; height: 0; pointer-events: none; opacity: 0;"></svg>
+  <script src="pkg/drawkanji_wasm_bytes.js?v=317"></script>
+  <script>
+    window.Module = {
+      wasmBinary: window.WASM_BYTES
+    };
+  </script>
+  <script src="pkg/drawkanji_wasm_bin.js?v=317"></script>
+  <script src="animation_plugin.js?v=317"></script>
+  <script src="animation_archive.js?v=317"></script>
+  <script src="animation_common.js?v=317"></script>
+  <script src="web_support.js?v=317"></script>
+  <script src="animation_canvas.js?v=317"></script>
+  <script src="animation_webgpu_compute.js?v=317"></script>
+  <script src="animation_webgpu_cpu.js?v=317"></script>
+  <script src="animation_webgpu.js?v=317"></script>
+  <script src="app.js?v=317"></script>
+
+</body>
+</html>
